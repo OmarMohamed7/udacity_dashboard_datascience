@@ -3,7 +3,6 @@ from query_base import QueryBase
 
 # Import dependencies needed for sql execution
 # from the `sql_execution` module
-from sql_execution import QueryMixin
 
 # Define a subclass of QueryBase
 # called Employee
@@ -58,7 +57,7 @@ class Employee(QueryBase):
             FROM {self.name}
             WHERE employee_id = {id}
         """
-        return query(qquery)
+        return self.query(qquery)
 
     # Below is method with an SQL query
     # This SQL query generates the data needed for
@@ -78,4 +77,4 @@ class Employee(QueryBase):
             WHERE {self.name}.{self.name}_id = {id}
         """
         # Return the result of the SQL query as a pandas DataFrame
-        return QueryMixin.pandas_query(sql_query=sql_query)
+        return self.pandas_query(sql_query=sql_query)

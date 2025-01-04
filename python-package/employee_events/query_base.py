@@ -1,6 +1,6 @@
 # Import any dependencies needed to execute sql queries
 # YOUR CODE HERE
-from sql_execution import *
+from .sql_execution import *
 
 
 # Define a class called QueryBase
@@ -11,7 +11,7 @@ class QueryBase(QueryMixin):
     # Create a class attribute called `name`
     # set the attribute to an empty string
     # YOUR CODE HERE
-    name = ""
+    name = "employee"
 
 
     # Define a `names` method that receives
@@ -45,10 +45,9 @@ class QueryBase(QueryMixin):
             SELECT event_date, 
                    SUM(positive_events) AS positive_events, 
                    SUM(negative_events) AS negative_events
-            FROM {self.name}
-            JOIN event_data
-                ON {self.name}_id = event_data.{self.name}_id
-            WHERE {self.name}.{self.name}_id = {id}
+            FROM employee_events
+            JOIN {self.name}
+                ON {self.name}.{self.name}_id = {id}
             GROUP BY event_date
             ORDER BY event_date
         """
@@ -75,8 +74,7 @@ class QueryBase(QueryMixin):
             SELECT note_date, note
             FROM notes
             JOIN {self.name} 
-                USING({self.name}_id)
-            WHERE {self.name}.{self.name}_id = {id}
+            ON {self.name}.{self.name}_id = {id}
         """
         # Execute the query and return the result as a pandas DataFrame
         return self.pandas_query(sql_query)

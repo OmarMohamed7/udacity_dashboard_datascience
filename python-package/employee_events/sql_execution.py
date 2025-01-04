@@ -5,7 +5,10 @@ import pandas as pd
 
 # Using pathlib, create a `db_path` variable
 # that points to the absolute path for the `employee_events.db` file
-db_path = Path('employee_events.db').resolve()
+current_dir = Path(__file__).parent
+
+# Resolve the absolute path to the database file relative to the script's directory
+db_path = (current_dir / 'employee_events.db').resolve()
 
 # OPTION 1: MIXIN
 # Define a class called `QueryMixin`
@@ -16,8 +19,9 @@ class QueryMixin:
 
     def _connect(self):
         """Establishes a connection to the SQLite database."""
+        print(db_path)
         if not self.connection:
-            self.connection = connect(self.DB_PATH)
+            self.connection = connect(db_path)
 
     def _close_connection(self):
         """Closes the connection to the SQLite database."""

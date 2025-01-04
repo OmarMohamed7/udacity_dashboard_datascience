@@ -1,6 +1,5 @@
 # Import the QueryBase class
-from query_base import QueryBase
-
+from .query_base import *
 # Import dependencies needed for sql execution
 # from the `sql_execution` module
 
@@ -8,10 +7,11 @@ from query_base import QueryBase
 # called Employee
 class Employee(QueryBase):
 
-
+    def __init__(self):
+        self.name = "employee" 
+        super().__init__()
     # Set the class attribute `name`
     # to the string "employee"
-    name = "employee"
 
 
     # Define a method called `names`
@@ -30,7 +30,7 @@ class Employee(QueryBase):
     def names(self):
       
         query = f"""
-            SELECT full_name, employee_id
+            SELECT {self.name}_id, CONCAT(first_name, ' ', last_name) AS full_name
             FROM {self.name}
         """
         return self.queryMixin(query) 
@@ -53,11 +53,11 @@ class Employee(QueryBase):
         # Use f-string formatting and a WHERE filter to only return the full name of the employee
         # with an id equal to the id argument
         qquery = f"""
-            SELECT full_name
+            SELECT CONCAT(first_name, ' ', last_name) AS full_name
             FROM {self.name}
-            WHERE employee_id = {id}
+            WHERE {self.name}_id = {id}
         """
-        return self.query(qquery)
+        return self.queryMixin(qquery)
 
     # Below is method with an SQL query
     # This SQL query generates the data needed for
@@ -73,8 +73,7 @@ class Employee(QueryBase):
                  , SUM(negative_events) negative_events
             FROM {self.name}
             JOIN employee_events
-                USING({self.name}_id)
-            WHERE {self.name}.{self.name}_id = {id}
+            ON employee_events.{self.name}_id = {id}
         """
         # Return the result of the SQL query as a pandas DataFrame
-        return self.pandas_query(sql_query=sql_query)
+        return self.pandas_query(sql_query)

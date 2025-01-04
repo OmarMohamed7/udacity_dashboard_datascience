@@ -1,18 +1,15 @@
 # Import the QueryBase class
 # YOUR CODE HERE
-from query_base import QueryBase
-
-# Import dependencies for sql execution
-from sql_execution import QueryMixin
+from .query_base import QueryBase
 
 # Create a subclass of QueryBase
 # called  `Team`
 class Team(QueryBase):
     # Set the class attribute `name`
     # to the string "team"
-    # def __init__(self, db_connection):
-    #     super().__init__(db_connection)
-    name = "team" 
+    def __init__(self):
+        self.name = 'team'
+        super().__init__()
 
     # Define a `names` method
     # that receives no arguments
@@ -31,7 +28,7 @@ class Team(QueryBase):
             FROM {self.name}
         """
         # Execute the query and return the result as a list of tuples
-        return self.query(sql_query)
+        return self.queryMixin(sql_query)
     
 
     # Define a `username` method
@@ -52,7 +49,7 @@ class Team(QueryBase):
             WHERE team_id = {team_id}
         """
         # Execute the query and return the result as a list of tuples
-        return self.query(sql_query)
+        return self.queryMixin(sql_query)
 
 
     # Below is method with an SQL query
@@ -75,4 +72,4 @@ class Team(QueryBase):
                     GROUP BY employee_id
                    )
                 """
-        return QueryMixin.pandas_query(self,sql_query=sql_query)
+        return self.pandas_query(sql_query)

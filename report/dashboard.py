@@ -5,8 +5,27 @@ import matplotlib.pyplot as plt
 # Import QueryBase, Employee, Team from employee_events
 from employee_events import QueryBase, Employee, Team
 
+import pickle
+from pathlib import Path
+
+
 # import the load_model function from the utils.py file
-from report.utils import load_model
+
+project_root = Path(__file__).resolve().parent.parent
+
+# Using the `project_root` variable
+# create a `model_path` variable
+# that points to the file `model.pkl`
+# inside the assets directory
+#### YOUR CODE HERE
+model_path = project_root / 'assets' / 'model.pkl'
+
+def load_model():
+
+    with model_path.open('rb') as file:
+        model = pickle.load(file)
+
+    return model
 
 """
 Below, we import the parent classes
@@ -92,7 +111,8 @@ class LineChart(MatplotlibViz):
         
         # User the pandas .set_index method to set
         # the date column as the index
-        data.set_index('date', inplace=True)
+        print(data)
+        data.set_index('event_date', inplace=True)
         
         # Sort the index
         data.sort_index(inplace=True)
@@ -271,7 +291,7 @@ def home(r):
     # of the QueryBase class as arguments
     # Return the result
     #### YOUR CODE HERE
-    return report(None, QueryBase())
+    return H1(title="Welcome")
 
 # Create a route for a get request
 # Set the route's path to receive a request

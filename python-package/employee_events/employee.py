@@ -2,16 +2,18 @@
 from .query_base import *
 # Import dependencies needed for sql execution
 # from the `sql_execution` module
+from .sql_execution import *
 
 # Define a subclass of QueryBase
 # called Employee
 class Employee(QueryBase):
 
-    def __init__(self):
-        self.name = "employee" 
-        super().__init__()
+    name = "employee"
+
     # Set the class attribute `name`
     # to the string "employee"
+    def __init__(self):
+        self.query_mixin = QueryMixin()  # Create an instance of QueryMixin
 
 
     # Define a method called `names`
@@ -28,12 +30,11 @@ class Employee(QueryBase):
         # This query should return the data
         # for all employees in the database
     def names(self):
-      
-        query = f"""
-            SELECT {self.name}_id, CONCAT(first_name, ' ', last_name) AS full_name
+        query_str = f"""
+            SELECT {self.name}_id, first_name || ' ' || last_name AS full_name
             FROM {self.name}
         """
-        return self.queryMixin(query) 
+        return self.query_mixin.query(query_str) 
 
 
     # Define a method called `username`
@@ -57,7 +58,7 @@ class Employee(QueryBase):
             FROM {self.name}
             WHERE {self.name}_id = {id}
         """
-        return self.queryMixin(qquery)
+        return self.query_mixin.query(qquery)
 
     # Below is method with an SQL query
     # This SQL query generates the data needed for
@@ -76,4 +77,4 @@ class Employee(QueryBase):
             ON employee_events.{self.name}_id = {id}
         """
         # Return the result of the SQL query as a pandas DataFrame
-        return self.pandas_query(sql_query)
+        return self.query_mixin.pandas_query(sql_query)

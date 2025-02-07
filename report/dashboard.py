@@ -5,27 +5,9 @@ import matplotlib.pyplot as plt
 # Import QueryBase, Employee, Team from employee_events
 from employee_events import QueryBase, Employee, Team
 
-import pickle
-from pathlib import Path
-
-
 # import the load_model function from the utils.py file
+from utils import load_model
 
-project_root = Path(__file__).resolve().parent.parent
-
-# Using the `project_root` variable
-# create a `model_path` variable
-# that points to the file `model.pkl`
-# inside the assets directory
-#### YOUR CODE HERE
-model_path = project_root / 'assets' / 'model.pkl'
-
-def load_model():
-
-    with model_path.open('rb') as file:
-        model = pickle.load(file)
-
-    return model
 
 """
 Below, we import the parent classes
@@ -74,7 +56,7 @@ class ReportDropdown(Dropdown):
         # names and ids
     def component_data(self, entity_id: Any,model: Any):
        
-        return Employee().names()
+        return model.names()
 
 
 # Create a subclass of base_components/BaseComponent
@@ -111,7 +93,6 @@ class LineChart(MatplotlibViz):
         
         # User the pandas .set_index method to set
         # the date column as the index
-        print(data)
         data.set_index('event_date', inplace=True)
         
         # Sort the index
@@ -139,6 +120,9 @@ class LineChart(MatplotlibViz):
         # to the `.set_axis_styling`
         # method
         self.set_axis_styling(ax=ax)
+
+        self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
+
         
         # Set title and labels for x and y axis
         ax.set_title('Cumulative Event Counts')
@@ -179,7 +163,7 @@ class BarChart(MatplotlibViz):
         # Index the second column of predict_proba output
         # The shape should be (<number of records>, 1)
         #### YOUR CODE HERE
-        prediction[:, 1].reshape(-1, 1)
+        prediction = prediction[:, 1].reshape(-1, 1)
 
         
         # Below, create a `pred` variable set to
@@ -188,7 +172,7 @@ class BarChart(MatplotlibViz):
         # If the model's name attribute is "team"
         # We want to visualize the mean of the predict_proba output
         #### YOUR CODE HERE
-        pred = prediction[:, 1].mean() if model.name == 'team' else prediction[0, 0]
+        pred = prediction.mean() if model.name == 'team' else prediction[0]
 
         # Initialize a matplotlib subplot
         #### YOUR CODE HERE
@@ -196,7 +180,7 @@ class BarChart(MatplotlibViz):
         
         
         # Run the following code unchanged
-        ax.barh([''], [pred])
+        ax.barh([''], pred)
         ax.set_xlim(0, 1)
         ax.set_title('Predicted Recruitment Risk', fontsize=20)
         
@@ -204,7 +188,8 @@ class BarChart(MatplotlibViz):
         # to the `.set_axis_styling`
         # method
         #### YOUR CODE HERE
-        self.set_axis_styling(ax=ax)
+        self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
+
  
 # Create a subclass of combined_components/CombinedComponent
 # called Visualizations       
@@ -274,7 +259,7 @@ class Report(CombinedComponent):
     ]
 
 # Initialize a fasthtml app 
-app,rt = fast_app()
+app = FastHTML()
 
 # Initialize the `Report` class
 report = Report()
@@ -284,14 +269,14 @@ report = Report()
 # Set the route's path to the root
 #### YOUR CODE HERE
 @app.get('/')
-def home(r):
+def home():
     
     # Call the initialized report
     # pass None and an instance
     # of the QueryBase class as arguments
     # Return the result
     #### YOUR CODE HERE
-    return H1(title="Welcome")
+    return report(1, Employee())
 
 # Create a route for a get request
 # Set the route's path to receive a request
@@ -302,14 +287,14 @@ def home(r):
 # to a string datatype
 #### YOUR CODE HERE
 @app.get('/employee/{id}')
-def employee_profile(r, id: str):
+def employee_profile(id: str):
     
     # Call the initialized report
     # pass the ID and an instance
     # of the Employee SQL class as arguments
     # Return the result
     #### YOUR CODE HERE
-    return report(id, Employee())
+    return report(int(id), Employee())
 
 # Create a route for a get request
 # Set the route's path to receive a request
@@ -319,13 +304,13 @@ def employee_profile(r, id: str):
 # parameterize the team ID 
 # to a string datatype
 @app.get('/team/{id}')
-def team_profile(r, id: str):
+def team_profile(id: str):
  
     # Call the initialized report
     # pass the id and an instance
     # of the Team SQL class as arguments
     # Return the result
-    return report(id, Team())
+    return report(int(id), Team())
 
 
 
